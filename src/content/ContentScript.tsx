@@ -1,7 +1,5 @@
 import { extractEmailThread } from '../utils/gmail';
 import { getStorageData } from '../utils/storage';
-import { searchContactByEmail } from '../api/hubspot';
-import { generateEmailResponse } from '../api/openai';
 import { EmailContext } from '../types';
 import './content.css';
 
@@ -119,8 +117,8 @@ async function handleBreezeReply(replyButton: HTMLElement): Promise<void> {
     // Step 3: Show loading message
     showLoadingMessage(composeBox);
 
-    // Step 4: Get API keys
-    const { hubspotToken, openaiKey } = await getStorageData();
+    // Step 4: Check if API keys are configured
+    const { openaiKey } = await getStorageData();
 
     if (!openaiKey) {
       composeBox.textContent = '';
@@ -139,30 +137,25 @@ async function handleBreezeReply(replyButton: HTMLElement): Promise<void> {
 
     console.log('Extracted thread:', thread);
 
-    // Step 6: Fetch HubSpot contact
-    let contact = null;
-    if (hubspotToken && thread.senderEmail) {
-      console.log('Fetching HubSpot contact for:', thread.senderEmail);
-      contact = await searchContactByEmail(thread.senderEmail, hubspotToken);
-      if (contact) {
-        console.log('Found contact:', contact);
-      }
-    }
-
-    // Step 7: Generate AI response
+    // Step 6: Send request to background script to generate response
+    // Background script will handle API calls to avoid CORS issues
     const context: EmailContext = {
       thread,
-      contact: contact || undefined,
+      contact: undefined,
     };
 
-    console.log('Generating response with context...');
-    const response = await generateEmailResponse(context, openaiKey);
+    const result = await chrome.runtime.sendMessage({
+      type: 'GENERATE_RESPONSE',
+      data: { context },
+    });
 
-    if (!response) {
+    if (!result.success || !result.response) {
       composeBox.textContent = '';
-      alert('Failed to generate response. Please check your API keys and try again.');
+      alert(result.error || 'Failed to generate response. Please check your API keys and try again.');
       return;
     }
+
+    const response = result.response;
 
     // Step 8: Insert response into compose box
     composeBox.textContent = response;

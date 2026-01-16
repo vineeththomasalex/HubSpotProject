@@ -16,6 +16,10 @@
     "default_title": "HubSpot Gmail Breeze AI Settings"
   },
   "options_page": "src/settings/settings.html",
+  "background": {
+    "service_worker": "src/background/background.ts",
+    "type": "module"
+  },
   "content_scripts": [
     {
       "matches": ["https://mail.google.com/*"],
