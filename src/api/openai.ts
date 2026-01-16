@@ -21,7 +21,7 @@ export async function generateEmailResponse(
     const requestBody: OpenAIChatCompletionRequest = {
       model: 'gpt-5-nano',
       messages,
-      temperature: 0.7,
+      // temperature: 0.7, // GPT-5 Nano only supports default temperature of 1
       max_completion_tokens: 500,
     };
 

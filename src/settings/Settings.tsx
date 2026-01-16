@@ -5,6 +5,12 @@ import { testOpenAIConnection } from '../api/openai';
 import './settings.css';
 
 function Settings() {
+  // Check if API keys are set in environment variables
+  const envHubspotToken = import.meta.env.VITE_HUBSPOT_ACCESS_TOKEN || '';
+  const envOpenaiKey = import.meta.env.VITE_OPENAI_API_KEY || '';
+  const isHubspotLocked = !!envHubspotToken;
+  const isOpenaiLocked = !!envOpenaiKey;
+
   const [hubspotToken, setHubspotToken] = useState('');
   const [openaiKey, setOpenaiKey] = useState('');
   const [saveStatus, setSaveStatus] = useState('');
@@ -20,8 +26,9 @@ function Settings() {
   const loadSettings = async () => {
     try {
       const data = await getStorageData();
-      setHubspotToken(data.hubspotToken || '');
-      setOpenaiKey(data.openaiKey || '');
+      // Use env variables if set, otherwise use stored values
+      setHubspotToken(envHubspotToken || data.hubspotToken || '');
+      setOpenaiKey(envOpenaiKey || data.openaiKey || '');
     } catch (error) {
       console.error('Error loading settings:', error);
     } finally {
@@ -111,12 +118,19 @@ function Settings() {
           </p>
           <div className="input-group">
             <label htmlFor="hubspot-token">Private App Access Token:</label>
+            {isHubspotLocked && (
+              <p className="env-notice">
+                ✓ Set via environment variable (.env file)
+              </p>
+            )}
             <input
               type="password"
               id="hubspot-token"
               value={hubspotToken}
               onChange={(e) => setHubspotToken(e.target.value)}
               placeholder="pat-na1-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+              disabled={isHubspotLocked}
+              className={isHubspotLocked ? 'locked' : ''}
             />
             <button onClick={handleTestHubSpot} className="test-button">
               Test Connection
@@ -143,12 +157,19 @@ function Settings() {
           </p>
           <div className="input-group">
             <label htmlFor="openai-key">OpenAI API Key:</label>
+            {isOpenaiLocked && (
+              <p className="env-notice">
+                ✓ Set via environment variable (.env file)
+              </p>
+            )}
             <input
               type="password"
               id="openai-key"
               value={openaiKey}
               onChange={(e) => setOpenaiKey(e.target.value)}
               placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+              disabled={isOpenaiLocked}
+              className={isOpenaiLocked ? 'locked' : ''}
             />
             <button onClick={handleTestOpenAI} className="test-button">
               Test Connection

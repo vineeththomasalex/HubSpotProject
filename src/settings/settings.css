@@ -110,6 +110,22 @@ input[type='text']:focus {
   border-color: #ff7a59;
 }
 
+input[type='password']:disabled,
+input[type='text']:disabled,
+input.locked {
+  background: #f5f8fa;
+  color: #516f90;
+  cursor: not-allowed;
+  border-color: #cbd6e2;
+}
+
+.env-notice {
+  font-size: 13px;
+  color: #0d9488;
+  margin: 4px 0 8px 0;
+  font-weight: 500;
+}
+
 button {
   padding: 10px 20px;
   font-size: 14px;
