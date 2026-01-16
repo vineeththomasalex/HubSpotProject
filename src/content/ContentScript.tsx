@@ -1,7 +1,4 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import BreezeButton from './BreezeButton';
-import { extractEmailThread, insertTextIntoComposeBox } from '../utils/gmail';
+import { extractEmailThread } from '../utils/gmail';
 import { getStorageData } from '../utils/storage';
 import { searchContactByEmail } from '../api/hubspot';
 import { generateEmailResponse } from '../api/openai';
@@ -14,26 +11,17 @@ import './content.css';
 function initContentScript() {
   console.log('HubSpot Gmail Breeze AI: Content script loaded');
 
-  // Observe DOM for Gmail compose boxes
-  observeGmailCompose();
+  // Observe DOM for Gmail email action buttons (Reply/Forward)
+  observeGmailActions();
 }
 
 /**
- * Observe Gmail for new compose/reply boxes
+ * Observe Gmail for email action buttons (Reply/Forward area)
  */
-function observeGmailCompose() {
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach((node) => {
-        if (node instanceof HTMLElement) {
-          // Check if this is a reply/compose area
-          const composeBox = node.querySelector('[role="textbox"][aria-label*="Message"]');
-          if (composeBox) {
-            injectBreezeButton(composeBox as HTMLElement);
-          }
-        }
-      });
-    });
+function observeGmailActions() {
+  const observer = new MutationObserver(() => {
+    // Look for email messages that don't have our button yet
+    findAndInjectButtons();
   });
 
   // Observe the Gmail main container
@@ -42,118 +30,185 @@ function observeGmailCompose() {
     subtree: true,
   });
 
-  // Also check for existing compose boxes on load
+  // Initial check
   setTimeout(() => {
-    const existingComposeBoxes = document.querySelectorAll(
-      '[role="textbox"][aria-label*="Message"]'
-    );
-    existingComposeBoxes.forEach((box) => {
-      injectBreezeButton(box as HTMLElement);
-    });
-  }, 2000);
+    findAndInjectButtons();
+  }, 1000);
 }
 
 /**
- * Inject Breeze button near the compose box
+ * Find Gmail email action areas and inject Breeze button
  */
-function injectBreezeButton(composeBox: HTMLElement) {
-  // Check if button already exists
-  const existingButton = composeBox.parentElement?.querySelector('.breeze-button-container');
-  if (existingButton) {
-    return;
-  }
+function findAndInjectButtons() {
+  // Look for Gmail's action button containers
+  // These contain Reply, Reply All, Forward buttons
+  const actionContainers = document.querySelectorAll('[role="button"][data-tooltip*="Reply"]');
 
-  // Find the toolbar area (usually the parent or sibling of compose box)
-  let toolbar = composeBox.parentElement?.querySelector('[role="toolbar"]');
+  actionContainers.forEach((replyButton) => {
+    const parent = replyButton.parentElement;
+    if (!parent || parent.querySelector('.breeze-ai-button')) {
+      return; // Already injected or no parent
+    }
 
-  // If no toolbar found, try to find the compose actions area
-  if (!toolbar) {
-    const composeArea = composeBox.closest('[role="region"]');
-    toolbar = composeArea?.querySelector('[role="toolbar"]');
-  }
+    // Create our button
+    injectBreezeButtonInActions(parent, replyButton as HTMLElement);
+  });
+}
 
-  // Create container for React component
-  const buttonContainer = document.createElement('div');
-  buttonContainer.id = `breeze-button-${Date.now()}`;
-  buttonContainer.style.display = 'inline-block';
-  buttonContainer.style.marginLeft = '8px';
+/**
+ * Inject Breeze button into Gmail's action button area
+ */
+function injectBreezeButtonInActions(container: HTMLElement, replyButton: HTMLElement) {
+  // Create button element styled like Gmail's buttons
+  const breezeBtn = document.createElement('div');
+  breezeBtn.className = 'breeze-ai-button';
+  breezeBtn.setAttribute('role', 'button');
+  breezeBtn.setAttribute('aria-label', 'Reply with Breeze AI');
+  breezeBtn.title = 'Reply with Breeze AI';
 
-  // Insert button container
-  if (toolbar) {
-    toolbar.appendChild(buttonContainer);
+  // Add icon and text
+  breezeBtn.innerHTML = `
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="margin-right: 4px;">
+      <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span>Reply with Breeze</span>
+  `;
+
+  // Add click handler
+  breezeBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await handleBreezeReply(replyButton);
+  });
+
+  // Insert after the reply button
+  if (replyButton.nextSibling) {
+    container.insertBefore(breezeBtn, replyButton.nextSibling);
   } else {
-    // Fallback: insert before compose box
-    composeBox.parentElement?.insertBefore(buttonContainer, composeBox);
+    container.appendChild(breezeBtn);
   }
-
-  // Render React button
-  const root = ReactDOM.createRoot(buttonContainer);
-  root.render(
-    <React.StrictMode>
-      <BreezeButton onGenerate={handleGenerateResponse} />
-    </React.StrictMode>
-  );
 }
 
 /**
- * Handle the "Generate Response" button click
+ * Handle Breeze reply button click
  */
-async function handleGenerateResponse(): Promise<void> {
-  console.log('Generating AI response...');
+async function handleBreezeReply(replyButton: HTMLElement): Promise<void> {
+  try {
+    // Step 1: Click the Gmail Reply button to open compose box
+    replyButton.click();
 
-  // Step 1: Get API keys from storage
-  const { hubspotToken, openaiKey } = await getStorageData();
+    // Wait for compose box to appear
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-  if (!openaiKey) {
-    alert('Please configure your OpenAI API key in the extension settings.');
-    chrome.runtime.openOptionsPage();
-    return;
+    // Step 2: Find the compose box
+    const composeBox = findComposeBox();
+    if (!composeBox) {
+      alert('Could not find reply box. Please try again.');
+      return;
+    }
+
+    // Step 3: Show loading message
+    showLoadingMessage(composeBox);
+
+    // Step 4: Get API keys
+    const { hubspotToken, openaiKey } = await getStorageData();
+
+    if (!openaiKey) {
+      composeBox.textContent = '';
+      alert('Please configure your OpenAI API key in the extension settings.');
+      chrome.runtime.openOptionsPage();
+      return;
+    }
+
+    // Step 5: Extract email thread
+    const thread = extractEmailThread();
+    if (!thread) {
+      composeBox.textContent = '';
+      alert('Could not extract email thread. Please try again.');
+      return;
+    }
+
+    console.log('Extracted thread:', thread);
+
+    // Step 6: Fetch HubSpot contact
+    let contact = null;
+    if (hubspotToken && thread.senderEmail) {
+      console.log('Fetching HubSpot contact for:', thread.senderEmail);
+      contact = await searchContactByEmail(thread.senderEmail, hubspotToken);
+      if (contact) {
+        console.log('Found contact:', contact);
+      }
+    }
+
+    // Step 7: Generate AI response
+    const context: EmailContext = {
+      thread,
+      contact: contact || undefined,
+    };
+
+    console.log('Generating response with context...');
+    const response = await generateEmailResponse(context, openaiKey);
+
+    if (!response) {
+      composeBox.textContent = '';
+      alert('Failed to generate response. Please check your API keys and try again.');
+      return;
+    }
+
+    // Step 8: Insert response into compose box
+    composeBox.textContent = response;
+
+    // Trigger input event to notify Gmail
+    const event = new Event('input', { bubbles: true });
+    composeBox.dispatchEvent(event);
+
+    console.log('Response inserted successfully');
+  } catch (error) {
+    console.error('Error in handleBreezeReply:', error);
+    alert('An error occurred. Please try again.');
   }
+}
 
-  // Step 2: Extract email thread from Gmail
-  const thread = extractEmailThread();
+/**
+ * Find the compose box
+ */
+function findComposeBox(): HTMLElement | null {
+  const selectors = [
+    '[role="textbox"][aria-label*="Message"]',
+    '[aria-label="Message Body"]',
+    'div[contenteditable="true"][aria-label*="reply"]',
+  ];
 
-  if (!thread) {
-    alert('Could not extract email thread. Please try again.');
-    return;
-  }
-
-  console.log('Extracted thread:', thread);
-
-  // Step 3: Fetch HubSpot contact (if token available)
-  let contact = null;
-  if (hubspotToken && thread.senderEmail) {
-    console.log('Fetching HubSpot contact for:', thread.senderEmail);
-    contact = await searchContactByEmail(thread.senderEmail, hubspotToken);
-    if (contact) {
-      console.log('Found contact:', contact);
-    } else {
-      console.log('No contact found in HubSpot');
+  for (const selector of selectors) {
+    const element = document.querySelector(selector) as HTMLElement;
+    if (element && element.isContentEditable) {
+      return element;
     }
   }
 
-  // Step 4: Build context and generate response
-  const context: EmailContext = {
-    thread,
-    contact: contact || undefined,
-  };
+  return null;
+}
 
-  console.log('Generating response with context...');
-  const response = await generateEmailResponse(context, openaiKey);
-
-  if (!response) {
-    alert('Failed to generate response. Please check your API keys and try again.');
-    return;
-  }
-
-  // Step 5: Insert response into compose box
-  const success = insertTextIntoComposeBox(response);
-
-  if (success) {
-    console.log('Response inserted successfully');
-  } else {
-    alert('Could not insert response into compose box. Please try copying it manually.');
-  }
+/**
+ * Show loading message in compose box
+ */
+function showLoadingMessage(composeBox: HTMLElement) {
+  composeBox.innerHTML = `
+    <div style="display: flex; align-items: center; color: #5f6368; font-style: italic;">
+      <div style="
+        width: 16px;
+        height: 16px;
+        border: 2px solid #ff7a59;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-right: 8px;
+      "></div>
+      <span>Generating response with Breeze AI...</span>
+    </div>
+  `;
 }
 
 // Initialize when DOM is ready

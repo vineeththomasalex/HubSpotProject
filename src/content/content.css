@@ -1,70 +1,41 @@
-/* Breeze Button Container */
-.breeze-button-container {
+/* Breeze AI Button - Styled like Gmail's action buttons with orange theme */
+.breeze-ai-button {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-}
-
-/* Breeze Button - styled to match Gmail */
-.breeze-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  padding: 8px 12px;
+  margin-left: 4px;
+  font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: #ff7a59;
-  background: white;
-  border: 1px solid #ff7a59;
+  background: transparent;
+  border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  outline: none;
+  transition: background-color 0.2s ease;
+  user-select: none;
+  white-space: nowrap;
 }
 
-.breeze-button:hover {
-  background: #fff5f3;
-  box-shadow: 0 1px 3px rgba(255, 122, 89, 0.2);
+.breeze-ai-button:hover {
+  background-color: rgba(255, 122, 89, 0.08);
 }
 
-.breeze-button:active {
-  background: #ffeae6;
+.breeze-ai-button:active {
+  background-color: rgba(255, 122, 89, 0.15);
 }
 
-.breeze-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Icon */
-.breeze-icon {
-  width: 16px;
-  height: 16px;
+.breeze-ai-button svg {
   flex-shrink: 0;
 }
 
-/* Spinner */
-.breeze-spinner {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255, 122, 89, 0.3);
-  border-top-color: #ff7a59;
-  border-radius: 50%;
-  animation: breeze-spin 0.8s linear infinite;
+.breeze-ai-button span {
+  margin-left: 4px;
 }
 
-@keyframes breeze-spin {
+/* Spinner animation for loading state */
+@keyframes spin {
   to {
     transform: rotate(360deg);
   }
-}
-
-/* Error Message */
-.breeze-error {
-  display: inline-block;
-  font-size: 12px;
-  color: #d33;
-  font-weight: 500;
 }
