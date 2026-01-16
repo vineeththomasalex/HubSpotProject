@@ -39,7 +39,8 @@ export interface OpenAIChatCompletionRequest {
   model: string;
   messages: OpenAIMessage[];
   temperature?: number;
-  max_tokens?: number;
+  max_tokens?: number; // GPT-4 and older models
+  max_completion_tokens?: number; // GPT-5 models
 }
 
 export interface OpenAIChatCompletionResponse {

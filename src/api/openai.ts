@@ -22,7 +22,7 @@ export async function generateEmailResponse(
       model: 'gpt-5-nano',
       messages,
       temperature: 0.7,
-      max_tokens: 500,
+      max_completion_tokens: 500,
     };
 
     const response = await fetch(`${OPENAI_API_BASE}/chat/completions`, {
@@ -109,7 +109,7 @@ export async function testOpenAIConnection(apiKey: string): Promise<boolean> {
           content: 'Test',
         },
       ],
-      max_tokens: 5,
+      max_completion_tokens: 5,
     };
 
     const response = await fetch(`${OPENAI_API_BASE}/chat/completions`, {
