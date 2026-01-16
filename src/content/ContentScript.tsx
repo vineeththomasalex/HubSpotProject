@@ -40,18 +40,25 @@ function observeGmailActions() {
  * Find Gmail email action areas and inject Breeze button
  */
 function findAndInjectButtons() {
-  // Look for Gmail's action button containers
-  // These contain Reply, Reply All, Forward buttons
-  const actionContainers = document.querySelectorAll('[role="button"][data-tooltip*="Reply"]');
+  // Look for Gmail's Reply button (it's a span with role="link" and text "Reply")
+  const replyButtons = document.querySelectorAll('span[role="link"].ams');
 
-  actionContainers.forEach((replyButton) => {
-    const parent = replyButton.parentElement;
+  replyButtons.forEach((element) => {
+    const span = element as HTMLElement;
+
+    // Check if this is actually a Reply button
+    if (!span.textContent?.includes('Reply')) {
+      return;
+    }
+
+    // Check if we already injected the button
+    const parent = span.parentElement;
     if (!parent || parent.querySelector('.breeze-ai-button')) {
-      return; // Already injected or no parent
+      return;
     }
 
     // Create our button
-    injectBreezeButtonInActions(parent, replyButton as HTMLElement);
+    injectBreezeButtonInActions(parent, span);
   });
 }
 
