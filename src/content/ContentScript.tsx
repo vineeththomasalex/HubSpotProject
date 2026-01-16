@@ -6,6 +6,7 @@ import { getStorageData } from '../utils/storage';
 import { searchContactByEmail } from '../api/hubspot';
 import { generateEmailResponse } from '../api/openai';
 import { EmailContext } from '../types';
+import './content.css';
 
 /**
  * Main content script entry point

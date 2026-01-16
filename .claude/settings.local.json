@@ -6,7 +6,10 @@
       "Bash(npm install)",
       "Bash(npm run build:*)",
       "WebFetch(domain:developers.hubspot.com)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(gh repo create:*)",
+      "Bash(npm run setup-data:*)"
     ]
   }
 }
