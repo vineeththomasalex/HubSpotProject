@@ -1,0 +1,83 @@
+[
+  {
+    "firstname": "Sarah",
+    "lastname": "Chen",
+    "email": "testuser1@placeholder.local",
+    "company": "CloudTech Solutions",
+    "jobtitle": "VP of Engineering",
+    "phone": "+1-415-555-0101",
+    "note": "⚠️ IMPORTANT: Update all email addresses in this file to match Gmail addresses in your inbox before running the setup script!"
+  },
+  {
+    "firstname": "Michael",
+    "lastname": "Rodriguez",
+    "email": "testuser2@placeholder.local",
+    "company": "DataDrive Inc",
+    "jobtitle": "Chief Technology Officer",
+    "phone": "+1-650-555-0202"
+  },
+  {
+    "firstname": "Jennifer",
+    "lastname": "Thompson",
+    "email": "testuser3@placeholder.local",
+    "company": "BrightWave Marketing",
+    "jobtitle": "Creative Director",
+    "phone": "+1-310-555-0303"
+  },
+  {
+    "firstname": "David",
+    "lastname": "Park",
+    "email": "testuser4@placeholder.local",
+    "company": "SalesForce Pro",
+    "jobtitle": "Regional Sales Manager",
+    "phone": "+1-512-555-0404"
+  },
+  {
+    "firstname": "Emily",
+    "lastname": "Johnson",
+    "email": "testuser5@placeholder.local",
+    "company": "TechFlow Systems",
+    "jobtitle": "Senior Product Manager",
+    "phone": "+1-206-555-0505"
+  },
+  {
+    "firstname": "Robert",
+    "lastname": "Williams",
+    "email": "testuser6@placeholder.local",
+    "company": "Williams Consulting LLC",
+    "jobtitle": "Business Consultant",
+    "phone": "+1-617-555-0606"
+  },
+  {
+    "firstname": "Maria",
+    "lastname": "Garcia",
+    "email": "testuser7@placeholder.local",
+    "company": "Bella Fashion Co",
+    "jobtitle": "E-commerce Manager",
+    "phone": "+1-305-555-0707"
+  },
+  {
+    "firstname": "James",
+    "lastname": "Anderson",
+    "email": "testuser8@placeholder.local",
+    "company": "Anderson & Associates",
+    "jobtitle": "Founder & CEO",
+    "phone": "+1-404-555-0808"
+  },
+  {
+    "firstname": "Lisa",
+    "lastname": "Martinez",
+    "email": "testuser9@placeholder.local",
+    "company": "HealthTech Innovations",
+    "jobtitle": "IT Director",
+    "phone": "+1-713-555-0909"
+  },
+  {
+    "firstname": "Christopher",
+    "lastname": "Taylor",
+    "email": "testuser10@placeholder.local",
+    "company": "EduLearn Platform",
+    "jobtitle": "Education Technology Coordinator",
+    "phone": "+1-720-555-1010"
+  }
+]

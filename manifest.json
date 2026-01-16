@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "HubSpot Gmail Breeze AI",
+  "version": "1.0.0",
+  "description": "AI-powered email responses using HubSpot context and OpenAI",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://mail.google.com/*",
+    "https://api.hubapi.com/*",
+    "https://api.openai.com/*"
+  ],
+  "action": {
+    "default_title": "HubSpot Gmail Breeze AI Settings"
+  },
+  "options_page": "src/settings/settings.html",
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["src/content/ContentScript.tsx"],
+      "css": ["src/content/content.css"]
+    }
+  ],
+  "icons": {
+    "16": "public/icons/icon16.png",
+    "48": "public/icons/icon48.png",
+    "128": "public/icons/icon128.png"
+  }
+}
