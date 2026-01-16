@@ -19,7 +19,7 @@ export async function generateEmailResponse(
     const messages = buildPrompt(context);
 
     const requestBody: OpenAIChatCompletionRequest = {
-      model: 'gpt-4',
+      model: 'gpt-5-nano',
       messages,
       temperature: 0.7,
       max_tokens: 500,
@@ -102,7 +102,7 @@ function buildPrompt(context: EmailContext): OpenAIMessage[] {
 export async function testOpenAIConnection(apiKey: string): Promise<boolean> {
   try {
     const testRequest: OpenAIChatCompletionRequest = {
-      model: 'gpt-4',
+      model: 'gpt-5-nano',
       messages: [
         {
           role: 'user',
