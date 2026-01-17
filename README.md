@@ -4,11 +4,9 @@ An open source project to test out Claude Code.
 
 ## Demo
 
-See the extension in action:
+**[▶️ Click here to watch the demo video](public/readme/demo.mp4)**
 
-<video src="public/readme/demo.mp4" autoplay loop muted playsinline width="100%"></video>
-
-Close-up of the buttons:
+Close-up of the buttons in Gmail:
 
 ![Button Close-up](public/readme/demo1.png)
 
