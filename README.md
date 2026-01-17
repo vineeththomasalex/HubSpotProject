@@ -1,10 +1,10 @@
-# HubSpot-Gmail Breeze AI Integration Extension
+# HubSpot Gmail AutoDraft Extension
 
 An open source project to test out Claude Code.
 
 ## Demo
 
-**[▶️ Click here to watch the demo video](public/readme/demo.mp4)**
+![Demo](public/readme/demo.gif)
 
 Close-up of the buttons in Gmail:
 
@@ -12,13 +12,13 @@ Close-up of the buttons in Gmail:
 
 ## About
 
-This is a custom browser extension for Microsoft Edge (and Chrome) that enhances Gmail with AI-powered email response generation. The extension combines HubSpot contact data with OpenAI's GPT-4 to generate contextually relevant, professional email responses directly within Gmail.
+This is a custom browser extension for Microsoft Edge (and Chrome) that enhances Gmail with AI-powered email response generation. The extension combines HubSpot contact data with OpenAI's API to generate contextually relevant, professional email responses directly within Gmail.
 
 ## Features
 
 - **AI-Powered Email Responses**: Generate professional email replies with a single click
 - **HubSpot CRM Integration**: Automatically enriches AI responses with contact information from your HubSpot CRM
-- **Gmail Content Script**: Seamlessly integrates "Reply with Breeze" button into Gmail's interface
+- **Gmail Content Script**: Seamlessly integrates "Reply with Hubspot Data" button into Gmail's interface
 - **Settings Page**: Easy configuration of HubSpot and OpenAI API credentials
 - **Context-Aware AI**: Uses full email thread history and contact profile for personalized responses
 
@@ -27,7 +27,7 @@ This is a custom browser extension for Microsoft Edge (and Chrome) that enhances
 - **Build Tool**: Vite + @crxjs/vite-plugin
 - **Framework**: React 18 + TypeScript
 - **Extension**: Manifest V3 (Edge/Chrome compatible)
-- **APIs**: HubSpot Contacts API, OpenAI GPT-4
+- **APIs**: HubSpot Contacts API, OpenAI API
 
 ## Prerequisites
 
@@ -39,7 +39,6 @@ Before using this extension, you'll need:
 
 2. **OpenAI API Key**
    - Get your API key from: [OpenAI Platform](https://platform.openai.com/api-keys)
-   - Requires GPT-4 access
 
 ## Installation
 
@@ -81,12 +80,12 @@ Before using this extension, you'll need:
 1. **Open Gmail**: Navigate to https://mail.google.com
 2. **Open an email thread**: Click on any email to view the thread
 3. **Click Reply**: Start composing a reply as you normally would
-4. **Click "Reply with Breeze"**: Look for the button in the compose toolbar
+4. **Click "Reply with Hubspot Data"**: Look for the button in the compose toolbar
 5. **Review and send**: The AI-generated response will appear in the compose box. Review, edit if needed, and send!
 
 ## How It Works
 
-1. **Email Context Extraction**: When you click "Reply with Breeze", the extension extracts:
+1. **Email Context Extraction**: When you click "Reply with Hubspot Data", the extension extracts:
    - Email thread content (all messages)
    - Sender email address
    - Email subject and metadata
@@ -96,9 +95,10 @@ Before using this extension, you'll need:
    - Phone number and other contact details
    - If no contact is found, the extension continues without this context
 
-3. **AI Response Generation**: The extension sends to OpenAI:
+3. **AI Response Generation**: The extension sends to OpenAI API:
    - Full email thread
    - HubSpot contact information (if available)
+   - Your profile information (job title, communication style, etc.)
    - A professional email assistant prompt
 
 4. **Response Insertion**: The generated response is automatically inserted into Gmail's compose box for your review
@@ -140,10 +140,9 @@ npm run build
 
 ## Important Notes
 
-- **API Costs**: This extension uses OpenAI's GPT-4 API, which has usage costs. Monitor your OpenAI usage dashboard.
-- **HubSpot Branding**: The button is named "Reply with Breeze" as a nod to HubSpot's Breeze AI, but technically uses OpenAI + HubSpot data (since HubSpot doesn't provide a public Breeze AI API as of January 2026).
+- **API Costs**: This extension uses OpenAI's API, which has usage costs. Monitor your OpenAI usage dashboard.
 - **Gmail Compatibility**: Tested on Gmail's standard interface. May require adjustments for custom themes or Gmail updates.
-- **Privacy**: API keys are stored securely in Chrome's sync storage. Never shared with third parties.
+- **Privacy**: API keys are stored securely in Chrome's local storage. Never shared with third parties.
 
 ## Troubleshooting
 
@@ -158,7 +157,7 @@ npm run build
 - Test connections to ensure keys are valid
 
 ### Generated response not inserting
-- Try clicking in the compose box first, then click "Reply with Breeze"
+- Try clicking in the compose box first, then click "Reply with Hubspot Data"
 - Check browser console for errors
 - Gmail's DOM may have changed - may need content script updates
 
@@ -170,7 +169,7 @@ npm run build
 ## Future Enhancements
 
 - Caching of HubSpot contact data to reduce API calls
-- Support for multiple AI models (GPT-3.5-turbo for faster/cheaper responses)
+- Support for multiple AI models for faster/cheaper responses
 - Custom prompt templates
 - Rate limiting and usage tracking
 - Support for multiple email threads
@@ -193,4 +192,4 @@ Built using [Claude Code](https://claude.com/claude-code) for AI-assisted develo
 
 ## Disclaimer
 
-This is an independent project and is not officially affiliated with HubSpot or OpenAI.
+This is an independent project and is not officially affiliated with HubSpot, OpenAI, or Google.
