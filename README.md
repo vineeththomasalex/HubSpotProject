@@ -1,6 +1,8 @@
 # HubSpot Gmail AutoDraft Extension
 
-An open source project to test out Claude Code.
+## About
+
+This is a custom browser extension for Microsoft Edge (and Chrome) that enhances Gmail with AI-powered email response generation. The extension combines HubSpot contact data with OpenAI's API to generate contextually relevant, professional email responses directly within Gmail.
 
 ## Demo
 
@@ -9,10 +11,6 @@ An open source project to test out Claude Code.
 Close-up of the buttons in Gmail:
 
 ![Button Close-up](public/readme/demo1.png)
-
-## About
-
-This is a custom browser extension for Microsoft Edge (and Chrome) that enhances Gmail with AI-powered email response generation. The extension combines HubSpot contact data with OpenAI's API to generate contextually relevant, professional email responses directly within Gmail.
 
 ## Features
 
