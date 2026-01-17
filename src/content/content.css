@@ -2,27 +2,30 @@
 .breeze-ai-button {
   display: inline-flex;
   align-items: center;
-  padding: 8px 12px;
-  margin-left: 4px;
+  padding: 8px 16px;
+  margin-left: 0;
+  margin-right: 8px;
   font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: #ff7a59;
   background: transparent;
-  border: none;
-  border-radius: 4px;
+  border: 1.5px solid rgba(255, 122, 89, 0.6);
+  border-radius: 24px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
   user-select: none;
   white-space: nowrap;
 }
 
 .breeze-ai-button:hover {
   background-color: rgba(255, 122, 89, 0.08);
+  border-color: rgba(255, 122, 89, 0.8);
 }
 
 .breeze-ai-button:active {
   background-color: rgba(255, 122, 89, 0.15);
+  border-color: rgba(255, 122, 89, 1);
 }
 
 .breeze-ai-button svg {
