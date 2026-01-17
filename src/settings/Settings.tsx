@@ -18,6 +18,16 @@ function Settings() {
   const [openaiTestStatus, setOpenaiTestStatus] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
+  // User context fields
+  const [userName, setUserName] = useState('');
+  const [jobTitle, setJobTitle] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [department, setDepartment] = useState('');
+  const [communicationStyle, setCommunicationStyle] = useState('');
+  const [customInstructions, setCustomInstructions] = useState('');
+  const [useCustomSignature, setUseCustomSignature] = useState(false);
+  const [customSignature, setCustomSignature] = useState('');
+
   // Load saved values on mount
   useEffect(() => {
     loadSettings();
@@ -29,6 +39,16 @@ function Settings() {
       // Use env variables if set, otherwise use stored values
       setHubspotToken(envHubspotToken || data.hubspotToken || '');
       setOpenaiKey(envOpenaiKey || data.openaiKey || '');
+
+      // Load user context fields
+      setUserName(data.userName || '');
+      setJobTitle(data.jobTitle || '');
+      setCompanyName(data.companyName || '');
+      setDepartment(data.department || '');
+      setCommunicationStyle(data.communicationStyle || '');
+      setCustomInstructions(data.customInstructions || '');
+      setUseCustomSignature(data.useCustomSignature || false);
+      setCustomSignature(data.customSignature || '');
     } catch (error) {
       console.error('Error loading settings:', error);
     } finally {
@@ -42,6 +62,14 @@ function Settings() {
       await saveStorageData({
         hubspotToken,
         openaiKey,
+        userName,
+        jobTitle,
+        companyName,
+        department,
+        communicationStyle,
+        customInstructions,
+        useCustomSignature,
+        customSignature,
       });
       setSaveStatus('✓ Saved successfully!');
       setTimeout(() => setSaveStatus(''), 3000);
@@ -178,6 +206,123 @@ function Settings() {
               <span className="status-message">{openaiTestStatus}</span>
             )}
           </div>
+        </section>
+
+        <section className="setting-section">
+          <h2>Your Profile</h2>
+          <p className="help-text">
+            Tell us about yourself to help AI generate more personalized responses.
+            All fields are optional.
+          </p>
+          <div className="input-group">
+            <label htmlFor="user-name">Your Name:</label>
+            <input
+              type="text"
+              id="user-name"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              placeholder="John Doe"
+            />
+          </div>
+          <div className="input-group">
+            <label htmlFor="job-title">Job Title:</label>
+            <input
+              type="text"
+              id="job-title"
+              value={jobTitle}
+              onChange={(e) => setJobTitle(e.target.value)}
+              placeholder="Sales Engineer"
+            />
+          </div>
+          <div className="input-group">
+            <label htmlFor="company-name">Company Name:</label>
+            <input
+              type="text"
+              id="company-name"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              placeholder="Acme Corp"
+            />
+          </div>
+          <div className="input-group">
+            <label htmlFor="department">Department:</label>
+            <input
+              type="text"
+              id="department"
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              placeholder="Sales"
+            />
+          </div>
+        </section>
+
+        <section className="setting-section">
+          <h2>Communication Preferences</h2>
+          <p className="help-text">
+            Customize how AI generates your email responses.
+          </p>
+          <div className="input-group">
+            <label htmlFor="communication-style">Communication Style:</label>
+            <select
+              id="communication-style"
+              value={communicationStyle}
+              onChange={(e) => setCommunicationStyle(e.target.value)}
+            >
+              <option value="">Select a style...</option>
+              <option value="Formal">Formal</option>
+              <option value="Professional">Professional</option>
+              <option value="Casual">Casual</option>
+              <option value="Friendly">Friendly</option>
+              <option value="Concise">Concise</option>
+              <option value="Detailed">Detailed</option>
+            </select>
+          </div>
+          <div className="input-group">
+            <label htmlFor="custom-instructions">About You / Custom Instructions:</label>
+            <p className="help-text-small">
+              Describe your role and any guidelines for email responses (2-3 sentences)
+            </p>
+            <textarea
+              id="custom-instructions"
+              value={customInstructions}
+              onChange={(e) => setCustomInstructions(e.target.value)}
+              placeholder="I'm a technical sales engineer who helps enterprise customers integrate our API. I typically provide detailed technical explanations and can schedule demos."
+              rows={4}
+              maxLength={500}
+            />
+            <span className="char-count">{customInstructions.length} / 500</span>
+          </div>
+        </section>
+
+        <section className="setting-section">
+          <h2>Signature Override</h2>
+          <p className="help-text">
+            By default, Gmail will add your signature. Enable this to use a custom signature for AI-generated responses.
+          </p>
+          <div className="input-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={useCustomSignature}
+                onChange={(e) => setUseCustomSignature(e.target.checked)}
+              />
+              Use custom signature (overrides Gmail signature)
+            </label>
+          </div>
+          {useCustomSignature && (
+            <div className="input-group">
+              <label htmlFor="custom-signature">Custom Signature:</label>
+              <textarea
+                id="custom-signature"
+                value={customSignature}
+                onChange={(e) => setCustomSignature(e.target.value)}
+                placeholder="Best regards,&#10;John Doe&#10;Sales Engineer&#10;Acme Corp"
+                rows={4}
+                maxLength={1000}
+              />
+              <span className="char-count">{customSignature.length} / 1000</span>
+            </div>
+          )}
         </section>
 
         <section className="button-section">
