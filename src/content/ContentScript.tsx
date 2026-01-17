@@ -68,8 +68,8 @@ function injectBreezeButtonInActions(container: HTMLElement, replyButton: HTMLEl
   const breezeBtn = document.createElement('div');
   breezeBtn.className = 'breeze-ai-button';
   breezeBtn.setAttribute('role', 'button');
-  breezeBtn.setAttribute('aria-label', 'Reply with Breeze AI');
-  breezeBtn.title = 'Reply with Breeze AI';
+  breezeBtn.setAttribute('aria-label', 'Reply with Hubspot Data');
+  breezeBtn.title = 'Reply with Hubspot Data';
 
   // Add icon and text
   breezeBtn.innerHTML = `
@@ -78,7 +78,7 @@ function injectBreezeButtonInActions(container: HTMLElement, replyButton: HTMLEl
       <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
-    <span>Reply with Breeze</span>
+    <span>Reply with Hubspot Data</span>
   `;
 
   // Add click handler
@@ -144,21 +144,36 @@ async function handleBreezeReply(replyButton: HTMLElement): Promise<void> {
       contact: undefined,
     };
 
-    const result = await chrome.runtime.sendMessage({
-      type: 'GENERATE_RESPONSE',
-      data: { context },
-    });
+    console.log('[Content] Sending message to background script...', context);
 
-    if (!result.success || !result.response) {
+    let result;
+    try {
+      result = await chrome.runtime.sendMessage({
+        type: 'GENERATE_RESPONSE',
+        data: { context },
+      });
+      console.log('[Content] Received response from background:', result);
+    } catch (error) {
+      console.error('[Content] Error sending message to background:', error);
       composeBox.textContent = '';
-      alert(result.error || 'Failed to generate response. Please check your API keys and try again.');
+      alert('Error communicating with extension background. Try reloading the extension.');
       return;
     }
 
+    if (!result || !result.success || !result.response) {
+      console.error('[Content] Generation failed:', result);
+      composeBox.textContent = '';
+      alert(result?.error || 'Failed to generate response. Please check your API keys and try again.');
+      return;
+    }
+
+    console.log('[Content] Successfully received response:', result.response.substring(0, 100) + '...');
     const response = result.response;
 
     // Step 8: Insert response into compose box
-    composeBox.textContent = response;
+    // Convert newlines to <br> tags for Gmail's contenteditable div
+    const formattedResponse = response.replace(/\n/g, '<br>');
+    composeBox.innerHTML = formattedResponse;
 
     // Trigger input event to notify Gmail
     const event = new Event('input', { bubbles: true });
@@ -206,7 +221,7 @@ function showLoadingMessage(composeBox: HTMLElement) {
         animation: spin 0.8s linear infinite;
         margin-right: 8px;
       "></div>
-      <span>Generating response with Breeze AI...</span>
+      <span>Generating Response with data from HubSpot...</span>
     </div>
   `;
 }
