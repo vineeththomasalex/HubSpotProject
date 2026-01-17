@@ -6,7 +6,18 @@ import { StorageData } from '../types';
 export async function getStorageData(): Promise<StorageData> {
   return new Promise((resolve, reject) => {
     try {
-      chrome.storage.local.get(['hubspotToken', 'openaiKey'], (result) => {
+      chrome.storage.local.get([
+        'hubspotToken',
+        'openaiKey',
+        'userName',
+        'jobTitle',
+        'companyName',
+        'department',
+        'communicationStyle',
+        'customInstructions',
+        'useCustomSignature',
+        'customSignature',
+      ], (result) => {
         if (chrome.runtime.lastError) {
           console.error('Error getting storage data:', chrome.runtime.lastError);
           reject(chrome.runtime.lastError);
@@ -15,10 +26,20 @@ export async function getStorageData(): Promise<StorageData> {
         console.log('Retrieved storage data:', {
           hasHubSpotToken: !!result.hubspotToken,
           hasOpenAIKey: !!result.openaiKey,
+          hasUserName: !!result.userName,
+          hasUserContext: !!(result.userName || result.jobTitle || result.customInstructions),
         });
         resolve({
           hubspotToken: result.hubspotToken,
           openaiKey: result.openaiKey,
+          userName: result.userName,
+          jobTitle: result.jobTitle,
+          companyName: result.companyName,
+          department: result.department,
+          communicationStyle: result.communicationStyle,
+          customInstructions: result.customInstructions,
+          useCustomSignature: result.useCustomSignature,
+          customSignature: result.customSignature,
         });
       });
     } catch (error) {

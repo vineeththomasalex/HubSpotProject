@@ -2,6 +2,15 @@
 export interface StorageData {
   hubspotToken?: string;
   openaiKey?: string;
+  // User context fields
+  userName?: string;
+  jobTitle?: string;
+  companyName?: string;
+  department?: string;
+  communicationStyle?: string;
+  customInstructions?: string;
+  useCustomSignature?: boolean;
+  customSignature?: string;
 }
 
 // HubSpot API types
@@ -41,6 +50,14 @@ export interface OpenAIChatCompletionRequest {
   temperature?: number;
   max_tokens?: number; // GPT-4 and older models
   max_completion_tokens?: number; // GPT-5 models
+  response_format?: {
+    type: 'json_schema';
+    json_schema: {
+      name: string;
+      strict?: boolean;
+      schema: Record<string, any>;
+    };
+  };
 }
 
 export interface OpenAIChatCompletionResponse {
@@ -67,8 +84,26 @@ export interface EmailMessage {
   content: string;
 }
 
+// User context
+export interface UserContext {
+  userName?: string;
+  jobTitle?: string;
+  companyName?: string;
+  department?: string;
+  communicationStyle?: string;
+  customInstructions?: string;
+  useCustomSignature?: boolean;
+  customSignature?: string;
+}
+
 // Context for AI
 export interface EmailContext {
   thread: EmailThread;
   contact?: HubSpotContact;
+  userContext?: UserContext;
+}
+
+// Structured OpenAI response
+export interface EmailResponseStructure {
+  body: string;
 }
