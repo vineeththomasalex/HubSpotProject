@@ -6,6 +6,8 @@ This is a custom browser extension for Microsoft Edge (and Chrome) that enhances
 
 ## Demo
 
+**Demo (click to play gif):**
+
 ![Demo](public/readme/demo.gif)
 
 Close-up of the buttons in Gmail:
