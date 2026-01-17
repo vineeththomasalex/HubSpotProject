@@ -2,6 +2,16 @@
 
 An open source project to test out Claude Code.
 
+## Demo
+
+See the extension in action:
+
+<video src="public/readme/demo.mp4" autoplay loop muted playsinline width="100%"></video>
+
+Close-up of the buttons:
+
+![Button Close-up](public/readme/demo1.png)
+
 ## About
 
 This is a custom browser extension for Microsoft Edge (and Chrome) that enhances Gmail with AI-powered email response generation. The extension combines HubSpot contact data with OpenAI's GPT-4 to generate contextually relevant, professional email responses directly within Gmail.
